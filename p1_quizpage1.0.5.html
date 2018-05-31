@@ -1,0 +1,137 @@
+qwe`<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>American Civil War Quiz</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.3.0/mustache.min.js"></script>
+    <style>
+    .mytext{
+		font-size: 18pt;
+		margin-left: 40px;
+	}
+	.titles{
+		background-color:blue;
+		color:white;
+		text-align:center;
+	}
+	.logo{
+		width:90%;
+	}
+	.item img{
+		width:1000px;
+	}
+	.modal  img{
+		width:100%
+	}
+    #myPage .panel-heading {
+            background-color: red;		color: white;
+            width:450px;
+            height:50px;
+    }
+    #myPage .panel-default {
+            width:450px
+            	 
+    }#myPage .panel{
+        margin:10px;       
+        border-radius:10px; box-shadow:black 5px 5px 5px;
+        display:inline-block;
+    }
+    .jumbotron{
+            text-align: center;
+            color: white;
+            background-image: url(https://www.worldatlas.com/r/w728-h425-c728x425/upload/8e/6f/eb/shutterstock-61933045.jpg);
+    } 
+    </style>
+
+    <script type="text/template" id="Template">
+        <div class="panel panel-default">
+            <div class="panel-heading"> Question {{qNum}}:  {{info.question}} </div>
+            <div class="panel-body"> A. {{info.A}} <br>B. {{info.B}} <br>C. {{info.C}} <br>D. {{info.D}} </div>			
+            <div class="panel-footer">
+                <input type="text" id="{{qKey}}" placeholder="Choice letter">
+            </div>
+        </div>
+    </script>
+
+    <script>
+        var data; //global variable
+
+		function getData(){       	
+			$.getJSON("https://civil-war-quiz.firebaseio.com/.json", function(result){
+				data = result;
+                displayQuestions();	
+			});	
+		}
+	
+		// DISPLAY QUESTIONS
+		function displayQuestions(){
+			var build ="";
+			var template = document.getElementById("Template").innerHTML;  
+			var qNumber =0; // Question number
+		
+			for(var key in data){
+				qNumber++;
+				quesJSON ={
+					"info": data[key], 
+					"qKey": key,
+					"qNum": qNumber
+				}
+				build += Mustache.render(template, quesJSON);     
+			}
+			document.getElementById("quiz").innerHTML = build;							
+		}                    
+		
+		// CHECK ANSWERS AND CALCULATE SCORE
+		function checkAnswers(){
+			var score = 0;
+			var count = 0;
+			for(var key in data){
+                var correctAns = data[key].answer;
+				var userAns = document.getElementById(key).value;				
+                count++;
+				if (userAns.toUpperCase() == correctAns){
+					score++;
+				}
+                var grd = (score/count * 100).toFixed(0);		
+			}
+			document.getElementById("score").innerHTML = "<h1>You answered " + score + " out of " + count+" questions correctly!<br><br>That's a grade of<b> "+ grd + "%</b></h1>"; 
+		}
+	</script>
+</head>
+<body onload="getData()" id="myPage">
+        <div class="container">
+
+                <div class="jumbotron">
+                        <h1>American Civil War Quiz</h1>
+                        <p>Multiple Choice Quiz</p> 
+                </div>
+                    
+                <nav class="navbar navbar-default">
+                    <div class="container-fluid">
+                            <ul class="nav navbar-nav">
+                                <li><a href="index.html">Home</a></li>
+                                <li><a href="p1_subtopic1page1.0.5.html">Battle 1</a></li>
+                                <li><a href="p1_subtopic2page1.0.5.html">Battle 2</a></li>
+                                <li><a href="p1_subtopic3page1.0.5.html">Battle 3</a></li>
+                                <li><a href="p1_subtopic4page1.0.5.html">Battle 4</a></li>
+                                <li class="active"><a href="p1_quizpage1.0.5.html">Quiz</a></li>
+                                <li><a href="p1_aboutpage1.0.5.html">About</a></li>
+                            </ul>
+                    </div>
+                </nav>
+
+                <h1>Enter your choices below. Then click "Score Quiz"</h1>
+                
+                <div id="quiz"></div>
+                    <button onclick="checkAnswers()" type="button" class="btn btn-info">SCORE QUIZ</button>
+                <div id="score"></div>
+
+        </div>
+</body>
+</html>
+Tutorial_Quiz.html
+Displaying Tutorial_Quiz.html.
